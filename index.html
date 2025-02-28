@@ -1,0 +1,419 @@
+<div class="container">
+    <div class="content">
+        <div class="scene">
+            <div class="mountain front"></div>
+            <div class="mountain back"></div>
+            <div class="moon">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="rain one"></div>
+            <div class="rain two"></div>
+            <div class="rain three"></div>
+            <div class="rain four"></div>
+            <div class="rain five"></div>
+            <div class="rain six"></div>
+            <div class="rain seven"></div>
+            <div class="rain eight"></div>
+            <div class="rain nine"></div>
+            <div class="rain ten"></div>
+            <div class="rain eleven"></div>
+            <div class="rain tweve"></div>
+            <div class="rain thirteen"></div>
+            <div class="rain fourteen"></div>
+            <div class="rain fifteen"></div>
+            <div class="rain sixteen"></div>
+            <div class="rain seventeen"></div>
+        </div>
+        <div class="info">
+            <div class="contruction">
+                <p><b>Under Contruction</b></p>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    .container {
+        width: 100%;
+        height: 90vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .contruction {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: large;
+        font-weight: 200;
+    }
+
+    .content {
+        background: #1A2238;
+        width: 500px;
+        height: 400px;
+        position: relative;
+        box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, .3);
+    }
+
+    .scene {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .info {
+        background: #fff;
+        color: #26314F;
+        width: 100%;
+        height: 100px;
+        position: absolute;
+        top: 400px;
+        z-index: 20;
+        display: flex;
+        justify-content: space-around;
+        box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, .3);
+        overflow: hidden;
+    }
+
+    .info-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .info .info-container:nth-of-type(1) {
+        font-size: 4em;
+    }
+
+    .info p {
+        font-size: 1.1em;
+        line-height: .1em;
+    }
+
+    .mountain {
+        border-radius: 50%;
+        position: absolute;
+    }
+
+    .mountain.front {
+        background: #303C5D;
+        width: 250px;
+        height: 250px;
+        bottom: -170px;
+        left: -60px;
+        box-shadow:
+            200px 40px 0 70px #303C5D,
+            450px 0px 0 20px #303C5D;
+        z-index: 1;
+    }
+
+    .mountain.back {
+        background: #26314F;
+        width: 350px;
+        height: 350px;
+        bottom: -200px;
+        left: -40px;
+        box-shadow: 300px 0 0 0 #26314F;
+    }
+
+    .moon {
+        background: #F6EDBD;
+        box-shadow:
+            2px 2px 10px 1px #f7e585bd,
+            -2px -2px 10px 1px #f7e585bd;
+        overflow: hidden;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        position: absolute;
+        transform: translate(50px, 450px);
+        animation: moon-rise 2s 1 forwards;
+    }
+
+    .dot {
+        background: #ECE1A8;
+        border-radius: 50%;
+        position: absolute;
+    }
+
+    .dot:nth-of-type(1) {
+        width: 5px;
+        height: 5px;
+        top: 35px;
+        left: 50px;
+    }
+
+    .dot:nth-of-type(2) {
+        width: 8px;
+        height: 8px;
+        top: 15px;
+        left: 10px;
+    }
+
+    .dot:nth-of-type(3) {
+        width: 10px;
+        height: 10px;
+        top: 50px;
+        left: 50px;
+    }
+
+    .dot:nth-of-type(4) {
+        width: 4px;
+        height: 4px;
+        top: 66px;
+        left: 50px;
+    }
+
+    .dot:nth-of-type(5) {
+        width: 6px;
+        height: 6px;
+        top: 25px;
+        left: 78px;
+    }
+
+    .dot:nth-of-type(6) {
+        width: 10px;
+        height: 10px;
+        top: 71px;
+        left: 81px;
+    }
+
+    .dot:nth-of-type(7) {
+        width: 7px;
+        height: 7px;
+        top: 57px;
+        left: 12px;
+    }
+
+    .dot:nth-of-type(8) {
+        width: 10px;
+        height: 10px;
+        top: 77px;
+        left: 33px;
+    }
+
+    .dot:nth-of-type(9) {
+        width: 14px;
+        height: 14px;
+        top: 10px;
+        left: 48px;
+    }
+
+    .rain {
+        background: #7FC1F9;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border-bottom-right-radius: 0%;
+        transform: rotate(250deg);
+        position: absolute;
+        animation:
+            fall infinite cubic-bezier(0.4, 0, 1, 1) forwards;
+        z-index: 2;
+    }
+
+    .rain::after {
+        content: "";
+        background: #7fc0f98f;
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50px;
+        left: 50px;
+    }
+
+    .rain.one {
+        top: 0;
+        left: 50px;
+        animation-duration: 2s;
+    }
+
+    .rain.two {
+        top: 0;
+        left: 50px;
+        animation-duration: 1.2s;
+    }
+
+    .rain.three {
+        top: 0;
+        left: 10px;
+        animation-duration: 3.3s;
+    }
+
+    .rain.four {
+        top: 0;
+        left: 100px;
+        animation-duration: 2.4s;
+    }
+
+    .rain.five {
+        top: 0;
+        left: 150px;
+        animation-duration: 2.1s;
+    }
+
+    .rain.six {
+        top: 0;
+        left: 80px;
+        animation-duration: 1.6s;
+    }
+
+    .rain.seven {
+        top: 0;
+        left: 150px;
+        animation-duration: 2s;
+    }
+
+    .rain.eight {
+        top: 0;
+        left: 200px;
+        animation-duration: 3.8s;
+    }
+
+    .rain.nine {
+        top: 0;
+        left: 250px;
+        animation-duration: 2.2s;
+    }
+
+    .rain.ten {
+        top: 0;
+        left: 110px;
+        animation-duration: 2.5s;
+    }
+
+    .rain.eleven {
+        top: 0;
+        left: 250px;
+        animation-duration: 1s;
+    }
+
+    .rain.tweve {
+        top: 0;
+        left: 300px;
+        animation-duration: 3.2s;
+    }
+
+    .rain.thirteen {
+        top: 0;
+        left: 350px;
+        animation-duration: 3s;
+    }
+
+    .rain.fourteen {
+        top: 0;
+        left: 400px;
+        animation-duration: 1.4s;
+    }
+
+    .rain.fifteen {
+        top: 0;
+        left: 450px;
+        animation-duration: 2.3s;
+    }
+
+    .rain.sixteen {
+        top: 0;
+        left: 500px;
+        animation-duration: 3.6s;
+    }
+
+    .rain.seventeen {
+        top: 0;
+        left: 550px;
+        animation-duration: 1.7s;
+    }
+
+    .info-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #playPauseBtn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2em;
+        color: #26314F;
+    }
+
+    #playPauseBtn:focus {
+        outline: none;
+    }
+
+    /*keyframes*/
+
+    @keyframes moon-rise {
+        100% {
+            transform: translate(50px, 50px)
+        }
+    }
+
+    @keyframes fall {
+        0% {
+            transform: translate(0px, 0px) rotate(250deg) scale(1);
+        }
+
+        90% {
+            transform: translate(-50px, 390px) rotate(250deg) scale(1);
+        }
+
+        91% {
+            transform: translate(-50px, 400px) rotate(230deg) scale(3);
+            box-shadow:
+                2px 2px 0 0px #7FC1F9,
+                -2px -2px 0 0px #7FC1F9;
+        }
+
+        100% {
+            transform: translate(-50px, 390px) rotate(230deg) scale(1.6);
+            box-shadow:
+                0px 0px 0 0px #7FC1F9,
+                0px 0px 0 0px #7FC1F9;
+        }
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const audio = document.getElementById('music');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+
+        playPauseBtn.addEventListener('click', function () {
+            if (audio.paused) {
+                audio.play();
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            } else {
+                audio.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            }
+        });
+    });
+</script>
