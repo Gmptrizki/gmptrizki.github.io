@@ -1,29 +1,311 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pembagian Kelompok Acak</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        
+        .question-enter {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .correct-answer {
+            animation: correctPulse 0.6s ease-in-out;
+        }
+        
+        .wrong-answer {
+            animation: wrongShake 0.6s ease-in-out;
+        }
+        
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
 </head>
-<body>
-  <div class="container fade-in">
-    <h1>Pembagian Kelompok Acak</h1>
-    <div class="control-box">
-      <label for="jumlahKelompok">Jumlah Kelompok:</label>
-      <input type="number" id="jumlahKelompok" min="1" max="36" value="5">
-      <button id="btnAcak">Acak</button>
-      <button id="btnJpg">Download JPG</button>
-      <button id="btnPdf">Download PDF</button>
+<body class="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">🧠 Kuis Interaktif</h1>
+            <p class="text-xl text-purple-100">Uji pengetahuan Anda dengan pertanyaan menarik!</p>
+        </div>
+
+        <!-- Score Display -->
+        <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 mb-8 text-center">
+            <div class="flex justify-center items-center space-x-8">
+                <div class="text-white">
+                    <p class="text-sm font-medium opacity-80">Skor</p>
+                    <p class="text-3xl font-bold" id="score">0</p>
+                </div>
+                <div class="text-white">
+                    <p class="text-sm font-medium opacity-80">Pertanyaan</p>
+                    <p class="text-3xl font-bold"><span id="currentQuestion">1</span>/<span id="totalQuestions">5</span></p>
+                </div>
+                <div class="text-white">
+                    <p class="text-sm font-medium opacity-80">Benar</p>
+                    <p class="text-3xl font-bold text-green-300" id="correctCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Start Screen -->
+            <div id="startScreen" class="bg-white/95 backdrop-blur-lg rounded-3xl p-8 text-center shadow-2xl">
+                <div class="mb-6">
+                    <div class="text-6xl mb-4">🎯</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Siap untuk Tantangan?</h2>
+                    <p class="text-gray-600 text-lg mb-6">Kuis ini berisi 5 pertanyaan pengetahuan umum. Setiap jawaban benar bernilai 20 poin!</p>
+                </div>
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    🚀 Mulai Kuis
+                </button>
+            </div>
+
+            <!-- Question Screen -->
+            <div id="questionScreen" class="bg-white/95 backdrop-blur-lg rounded-3xl p-8 shadow-2xl hidden">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-medium" id="questionNumber">Pertanyaan 1</span>
+                        <div class="bg-gray-100 rounded-full h-3 w-48">
+                            <div class="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-500" id="progressBar" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6" id="questionText"></h2>
+                </div>
+
+                <div class="grid gap-4 mb-6" id="answersContainer">
+                    <!-- Answers will be inserted here -->
+                </div>
+
+                <div id="feedback" class="hidden mb-6 p-4 rounded-xl text-center font-medium"></div>
+
+                <button id="nextButton" onclick="nextQuestion()" class="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all duration-300 hidden">
+                    Lanjut ➡️
+                </button>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="bg-white/95 backdrop-blur-lg rounded-3xl p-8 text-center shadow-2xl hidden">
+                <div class="mb-6">
+                    <div class="text-6xl mb-4" id="resultEmoji">🎉</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4" id="resultTitle">Selamat!</h2>
+                    <div class="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-6">
+                        <p class="text-5xl font-bold text-purple-600 mb-2" id="finalScore">0</p>
+                        <p class="text-gray-600 text-lg">dari 100 poin</p>
+                    </div>
+                    <p class="text-gray-600 text-lg mb-6" id="resultMessage"></p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="restartQuiz()" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
+                        🔄 Ulangi Kuis
+                    </button>
+                    <button onclick="shareScore()" class="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
+                        📤 Bagikan Skor
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="captureArea" class="capture-box">
-      <div id="result" class="result-box"></div>
-    </div>
-  </div>
+    <script>
+        const questions = [
+            {
+                question: "Apa ibu kota Indonesia?",
+                answers: ["Jakarta", "Surabaya", "Bandung", "Medan"],
+                correct: 0
+            },
+            {
+                question: "Planet mana yang paling dekat dengan Matahari?",
+                answers: ["Venus", "Mars", "Merkurius", "Bumi"],
+                correct: 2
+            },
+            {
+                question: "Berapa jumlah benua di dunia?",
+                answers: ["5", "6", "7", "8"],
+                correct: 2
+            },
+            {
+                question: "Siapa penemu lampu pijar?",
+                answers: ["Thomas Edison", "Nikola Tesla", "Alexander Bell", "Albert Einstein"],
+                correct: 0
+            },
+            {
+                question: "Apa mata uang Jepang?",
+                answers: ["Won", "Yuan", "Yen", "Rupiah"],
+                correct: 2
+            }
+        ];
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-</body>
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let selectedAnswer = null;
+
+        function startQuiz() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('questionScreen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionScreen = document.getElementById('questionScreen');
+            questionScreen.classList.add('question-enter');
+            
+            document.getElementById('questionNumber').textContent = `Pertanyaan ${currentQuestionIndex + 1}`;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            
+            const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+
+            const answersContainer = document.getElementById('answersContainer');
+            answersContainer.innerHTML = '';
+
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.className = 'bg-gray-50 hover:bg-purple-50 border-2 border-gray-200 hover:border-purple-300 text-gray-800 font-medium py-4 px-6 rounded-xl text-left transition-all duration-300 transform hover:scale-102';
+                button.innerHTML = `<span class="font-bold text-purple-600">${String.fromCharCode(65 + index)}.</span> ${answer}`;
+                button.onclick = () => selectAnswer(index, button);
+                answersContainer.appendChild(button);
+            });
+
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('nextButton').classList.add('hidden');
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(answerIndex, buttonElement) {
+            if (selectedAnswer !== null) return;
+
+            selectedAnswer = answerIndex;
+            const question = questions[currentQuestionIndex];
+            const isCorrect = answerIndex === question.correct;
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#answersContainer button');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            // Show correct answer
+            buttons[question.correct].classList.add('bg-green-100', 'border-green-400', 'text-green-800');
+            buttons[question.correct].classList.add('correct-answer');
+
+            if (isCorrect) {
+                score += 20;
+                correctAnswers++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('correctCount').textContent = correctAnswers;
+                showFeedback('Benar! 🎉', 'bg-green-100 text-green-800', '✅ Jawaban Anda tepat!');
+            } else {
+                buttonElement.classList.add('bg-red-100', 'border-red-400', 'text-red-800');
+                buttonElement.classList.add('wrong-answer');
+                showFeedback('Salah! 😔', 'bg-red-100 text-red-800', `❌ Jawaban yang benar adalah: ${question.answers[question.correct]}`);
+            }
+
+            setTimeout(() => {
+                document.getElementById('nextButton').classList.remove('hidden');
+            }, 1000);
+        }
+
+        function showFeedback(title, className, message) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = `p-4 rounded-xl text-center font-medium ${className}`;
+            feedback.innerHTML = `<div class="font-bold text-lg mb-2">${title}</div><div>${message}</div>`;
+            feedback.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('questionScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            const percentage = (score / 100) * 100;
+            let emoji, title, message;
+
+            if (percentage >= 80) {
+                emoji = '🏆';
+                title = 'Luar Biasa!';
+                message = 'Anda memiliki pengetahuan yang sangat baik!';
+            } else if (percentage >= 60) {
+                emoji = '🎉';
+                title = 'Bagus Sekali!';
+                message = 'Pengetahuan Anda cukup baik, terus belajar!';
+            } else if (percentage >= 40) {
+                emoji = '👍';
+                title = 'Tidak Buruk!';
+                message = 'Masih ada ruang untuk belajar lebih banyak.';
+            } else {
+                emoji = '💪';
+                title = 'Semangat!';
+                message = 'Jangan menyerah, terus belajar dan coba lagi!';
+            }
+
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            selectedAnswer = null;
+            
+            document.getElementById('score').textContent = '0';
+            document.getElementById('correctCount').textContent = '0';
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function shareScore() {
+            const text = `Saya baru saja menyelesaikan Kuis Interaktif dan mendapat skor ${score}/100! 🧠✨ Coba juga kuis ini!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Hasil Kuis Interaktif',
+                    text: text
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Skor berhasil disalin ke clipboard! 📋');
+                });
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96814e0fb025a309',t:'MTc1NDAwOTA0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
